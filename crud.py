@@ -51,3 +51,12 @@ def update_currency(db: Session, currency_id: int, updates: CurrencyUpdate):
     db.commit()
     db.refresh(db_currency)
     return db_currency
+
+def delete_currency(db: Session, currency_id: int):
+    db_currency = db.query(Currency).filter(Currency.id == currency_id).first()
+    if not db_currency:
+        return {"error": "Currency not found"}
+
+    db.delete(db_currency)
+    db.commit()
+    return {"message": f"Currency with ID {currency_id} deleted successfully"}

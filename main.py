@@ -59,3 +59,10 @@ def update_currency(currency_id: int, updates: schemas.CurrencyUpdate, db: Sessi
     if not updated_currency:
         raise HTTPException(status_code=404, detail="Currency not found")
     return updated_currency
+
+@app.delete("/currencies/{currency_id}", response_model=schemas.CurrencyResponse)
+def delete_currency(currency_id: int, db: Session = Depends(get_db)):
+    deleted_currency = crud.delete_currency(db, currency_id)
+    if not deleted_currency:
+        raise HTTPException(status_code=404, detail="Currency not found")
+    return deleted_currency
