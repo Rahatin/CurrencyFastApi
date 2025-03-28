@@ -1,4 +1,6 @@
 from sqlalchemy.orm import Session
+from starlette.responses import JSONResponse
+
 from models import Currency
 from schemas import CurrencyCreate, CurrencyUpdate
 from sqlalchemy.exc import IntegrityError
@@ -53,10 +55,12 @@ def update_currency(db: Session, currency_id: int, updates: CurrencyUpdate):
     return db_currency
 
 def delete_currency(db: Session, currency_id: int):
-    db_currency = db.query(Currency).filter(Currency.id == currency_id).first()
-    if not db_currency:
-        return {"error": "Currency not found"}
+    currency = db.query(Currency).filter(Currency.id == currency_id).first()
+    if not currency:
+        return JSONResponse(status_code=404, content={"error": "Currency not found"})
 
-    db.delete(db_currency)
+    db.delete(currency)
     db.commit()
-    return {"message": f"Currency with ID {currency_id} deleted successfully"}
+    return JSONResponse(status_code=200, content={"message": "Currency deleted successfully"})
+
+
